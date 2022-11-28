@@ -20,7 +20,9 @@ public class WcApplication implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-//		dbInit.initTeams();
+		if (Boolean.parseBoolean(System.getenv("WC_TEAMS_INIT"))) {
+			dbInit.initTeams();
+		}
 //		dbInit.initMatches();
 	}
 
