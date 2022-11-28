@@ -1,0 +1,84 @@
+body {
+    background-color: #f8f9fa;
+}
+
+nav {
+    margin-bottom: 20px;
+}
+
+#matches {
+    display: flex;
+    justify-content: center;
+}
+
+.card {
+    margin: 10px;
+}
+
+.card.match {
+    padding: 0;
+}
+
+.match-images {
+    display:flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.match-images img {
+    width: 45%;
+}
+
+.card-body .row-items div {
+    width: 33%;
+    text-align: center;
+}
+
+.match .votes {
+    display: block;
+    margin-top: 5px;
+}
+
+.match .card-body div {
+    text-align: center;
+}
+
+.row-items {
+    display: flex;
+}
+
+.column-items {
+    display: column;
+}
+
+.space-between {
+    justify-content: space-between;
+}
+
+.center {
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+}
+
+.highlighted-text {
+    font-weight: bold;
+    font-size: 1.5em;
+}
+
+form div {
+    margin: 5px 0;
+}
+
+.match button {
+    font-weight: bold;
+    width: 100%;
+}
+
+.centered-card {
+    display: flex;
+    height: 100vh;
+    weight: 100%;
+    justify-content: center;
+    align-items: center;
+}
