@@ -29,9 +29,21 @@ nav {
     width: 45%;
 }
 
+.match-images {
+  cursor: pointer;
+}
+
 .card-body .row-items div {
     width: 33%;
     text-align: center;
+}
+
+.card-body .vote-count {
+  width: 45%;
+}
+
+.card-body .vote-count:nth-child(2) {
+  width: 10%;
 }
 
 .match .votes {

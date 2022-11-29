@@ -1,6 +1,7 @@
 package com.gfa.wc.controllers.rest;
 
 import com.gfa.wc.models.dtos.ErrorMessage;
+import com.gfa.wc.models.dtos.GamblerVote;
 import com.gfa.wc.models.dtos.MatchVotes;
 import com.gfa.wc.models.entities.FootballMatch;
 import com.gfa.wc.services.MatchService;
@@ -42,6 +43,12 @@ public class MatchRestController {
   @PostMapping
   public ResponseEntity<FootballMatch> createNewMatch(@RequestBody FootballMatch match) {
     return ResponseEntity.status(HttpStatus.CREATED).body(matchService.saveMatch(match));
+  }
+
+  @PostMapping("/{matchId}/votes")
+  public ResponseEntity<?> vote(@PathVariable Integer matchId, @RequestBody GamblerVote gamblerVote) {
+    matchService.vote(matchId, gamblerVote);
+    return ResponseEntity.status(204).build();
   }
 
 }
