@@ -39,4 +39,9 @@ public class GameController {
     }
   }
 
+  @GetMapping("/matches/{username}")
+  public String showMatchesPage() {
+    return "matches";
+  }
+
 }
