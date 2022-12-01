@@ -1,8 +1,10 @@
 package com.gfa.wc.utils;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gfa.wc.models.dtos.ramin.LoginRequest;
 import com.gfa.wc.models.dtos.ramin.LoginResponse;
 import com.gfa.wc.models.dtos.ramin.MatchesResponse;
+import com.gfa.wc.models.dtos.ramin.RaminError;
 import com.gfa.wc.models.dtos.ramin.RaminMatch;
 import com.gfa.wc.models.dtos.ramin.RaminTeam;
 import com.gfa.wc.models.dtos.ramin.TeamResponse;
@@ -11,6 +13,7 @@ import com.gfa.wc.models.entities.Team;
 import com.gfa.wc.repositories.MatchRepository;
 import com.gfa.wc.repositories.TeamRepository;
 import com.gfa.wc.services.RaminService;
+import okhttp3.ResponseBody;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -98,8 +101,17 @@ public class DBInit {
   private LoginResponse login() {
     Call<LoginResponse> loginCall = raminService.login(loginRequest);
     try {
-      Response<LoginResponse> response = loginCall.execute();
-      return response.body();
+      Response<?> response = loginCall.execute();
+      if (response.body() instanceof LoginResponse) {
+        return (LoginResponse) response.body();
+      } else {
+//        ResponseBody error = response.errorBody();
+//        String errorString = error.string();
+        ObjectMapper objectMapper = new ObjectMapper();
+        RaminError raminError = objectMapper.readValue(response.errorBody().string(), RaminError.class);
+        System.out.println(raminError);
+        return null;
+      }
     } catch (IOException e) {
       System.out.println("Login error");
       return null;

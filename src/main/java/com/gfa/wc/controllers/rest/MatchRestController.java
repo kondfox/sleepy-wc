@@ -7,6 +7,7 @@ import com.gfa.wc.models.entities.FootballMatch;
 import com.gfa.wc.services.MatchService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.NoSuchElementException;
 
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/matches")
 public class MatchRestController {
