@@ -23,7 +23,7 @@ public class WcApplication implements CommandLineRunner {
 		if (Boolean.parseBoolean(System.getenv("WC_TEAMS_INIT"))) {
 			dbInit.initTeams();
 		}
-		dbInit.initMatches();
+//		dbInit.initMatches();
 	}
 
 }

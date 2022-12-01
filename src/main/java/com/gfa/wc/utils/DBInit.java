@@ -12,8 +12,8 @@ import com.gfa.wc.models.entities.FootballMatch;
 import com.gfa.wc.models.entities.Team;
 import com.gfa.wc.repositories.MatchRepository;
 import com.gfa.wc.repositories.TeamRepository;
+import com.gfa.wc.services.RaminRetrofitService;
 import com.gfa.wc.services.RaminService;
-import okhttp3.ResponseBody;
 import org.springframework.stereotype.Component;
 import retrofit2.Call;
 import retrofit2.Response;
@@ -36,27 +36,23 @@ public class DBInit {
   private LoginRequest loginRequest;
   private RaminService raminService;
 
-  public DBInit(TeamRepository teamRepository, MatchRepository matchRepository, LoginRequest loginRequest) {
+  public DBInit(TeamRepository teamRepository, MatchRepository matchRepository, LoginRequest loginRequest, RaminService raminService) {
     this.teamRepository = teamRepository;
     this.matchRepository = matchRepository;
     this.loginRequest = loginRequest;
-    Retrofit retrofit = new Retrofit.Builder()
-            .baseUrl("http://api.cup2022.ir/api/v1/")
-            .addConverterFactory(JacksonConverterFactory.create())
-            .build();
-    this.raminService = retrofit.create(RaminService.class);
+    this.raminService = raminService;
   }
 
   public void initMatches() {
-    LoginResponse loginResponse = login();
+    LoginResponse loginResponse = raminService.login();
     String token = loginResponse.getData().getToken();
-    MatchesResponse matchesResponse = getMatches(token);
+    MatchesResponse matchesResponse = raminService.getMatches(token);
     Set<Integer> teamIds = matchesResponse.getData().stream()
             .map(match -> Arrays.asList(match.getHomeTeamId(), match.getAwayTeamId()))
             .flatMap(ids -> ids.stream())
             .collect(Collectors.toSet());
     Map<Integer, String> teamIdCodes = teamIds.stream()
-      .map(id -> getTeam(id, token))
+      .map(id -> raminService.getTeam(id, token))
       .collect(Collectors.toMap(RaminTeam::getId, match -> fifaCode(match.getFifaCode())));
     List<FootballMatch> matches = matchesResponse.getData().stream()
             .map(match -> convert(match, teamIdCodes))
@@ -73,50 +69,6 @@ public class DBInit {
       default:
         return code;
     }
-  }
-
-  private RaminTeam getTeam(Integer id, String token) {
-    Call<TeamResponse> getTeamCall = raminService.getTeam(id, token);
-    try {
-      Response<TeamResponse> response = getTeamCall.execute();
-      TeamResponse teams = response.body();
-      return teams.getData().get(0);
-    } catch (IOException e) {
-      System.out.println("GET /team/{id} error");
-      return null;
-    }
-  }
-
-  private MatchesResponse getMatches(String token) {
-    Call<MatchesResponse> getMatchesCall = raminService.getMatches(String.format("Bearer %s", token));
-    try {
-      Response<MatchesResponse> response = getMatchesCall.execute();
-      return response.body();
-    } catch (IOException e) {
-      System.out.println("GET /match error");
-      return null;
-    }
-  }
-
-  private LoginResponse login() {
-    Call<LoginResponse> loginCall = raminService.login(loginRequest);
-    try {
-      Response<?> response = loginCall.execute();
-      if (response.body() instanceof LoginResponse) {
-        return (LoginResponse) response.body();
-      } else {
-//        ResponseBody error = response.errorBody();
-//        String errorString = error.string();
-        ObjectMapper objectMapper = new ObjectMapper();
-        RaminError raminError = objectMapper.readValue(response.errorBody().string(), RaminError.class);
-        System.out.println(raminError);
-        return null;
-      }
-    } catch (IOException e) {
-      System.out.println("Login error");
-      return null;
-    }
-
   }
 
   public FootballMatch convert(RaminMatch raminMatch, Map<Integer, String> teamIdCodes) {
